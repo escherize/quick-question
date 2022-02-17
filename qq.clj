@@ -10,8 +10,11 @@
             [clojure.string :as str]))
 
 (def env (into {} (System/getenv)))
+
 (when (get env "DEBUG")
   (println (pr-str @(shell {:out :string} "pwd"))))
+
+(defonce *path (atom "./quick-question/qq.js"))
 
 (defn ask!
   "Takes in questions which is a single or a collection of maps which get
@@ -23,7 +26,12 @@
   - the names of `type`s:
   https://github.com/enquirer/enquirer/blob/8d626c206733420637660ac7c2098d7de45e8590/lib/prompts/index.js
   "
+
+
   [questions]
+  ;; (println "--- pwd is: " (:out @(shell {:out :string} "pwd")))
+  ;; (prn *file*)
+  ;; (prn (System/getProperty "babashka.file"))
   (let [seed (str
                (apply str (repeatedly 10 #(rand-nth "qwertyuioplkjhgfdsazxcvbnmPOIUYTREWQASDFGHJKLMNBVCXZ")))
                "_")
@@ -31,14 +39,18 @@
         out-file (str seed "out.json")
         json-questions (json/encode questions)]
     (try (let [_ (spit in-file json-questions)
-               _ (shell (<< "node qq.js {{in-file}} {{out-file}}"))
+               js-path @*path
+               _ (shell (<< "node {{js-path}} {{in-file}} {{out-file}}"))
                out (loop [] (if (fs/exists? out-file) (slurp out-file) (recur)))]
            (json/decode out
                         (comp keyword
                               (fn [s] (str/replace s #"\s+" "-")))))
          (finally (do
-                    (fs/delete in-file)
-                    (fs/delete out-file))))))
+                    (fs/delete-if-exists in-file)
+                    (fs/delete-if-exists out-file))))))
+
+(defn set-path! [file-location]
+  (reset! *path file-location))
 
 #_(prn (qq! [{:type :input :name :name :message "What is your name"}
              {:type :numeral :name :age :message "What is your age?"}]))
