@@ -35,12 +35,12 @@
   (let [seed (str
                (apply str (repeatedly 10 #(rand-nth "qwertyuioplkjhgfdsazxcvbnmPOIUYTREWQASDFGHJKLMNBVCXZ")))
                "_")
-        in-file  (str seed "in.json")
-        out-file (str seed "out.json")
+        path @*path
+        in-file  (<< "{{path}}/{{seed}} in.json")
+        out-file (<< "{{path}}/{{seed}} out.json")
         json-questions (json/encode questions)]
     (try (let [_ (spit in-file json-questions)
-               js-path @*path
-               _ (shell (<< "node {{js-path}} {{in-file}} {{out-file}}"))
+               _ (shell (<< "node {{path}}/qq.js {{in-file}} {{out-file}}"))
                out (loop [] (if (fs/exists? out-file) (slurp out-file) (recur)))]
            (json/decode out
                         (comp keyword
@@ -142,7 +142,7 @@
       (newline)
       (newline)
       (println "Now, we will ask you them, as if you called: ")
-      (println "(qq! " (pr-str questions) ")")
+      (println "(ask! " (pr-str questions) ")")
       (newline)
       (newline)
       (flush)

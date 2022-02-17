@@ -20,25 +20,31 @@ I would copy this into some init script, maybe into your babashka preambles?
   []
  `(do (when-not (fs/exists? "quick-question")
          (println "Need to do some first time setup, please be patient...")
-         (shell "git clone https://github.com/escherize/quick-question.git")
-         (shell {:dir "./quick-question"} "npm install enquirer")
+         (shell "git clone https://github.com/escherize/quick-question.git .qq")
+         (shell {:dir "./.qq"} "npm install enquirer")
          (println "We're ready to go."))
-       (deps/add-deps '{:deps {qq/qq {:local/root "./quick-question"}}})
+       (deps/add-deps '{:deps {qq/qq {:local/root "./.qq"}}})
        (require '[qq :as qq])
-       (qq/set-path! (str (str (fs/parent *file*)) "/quick-question/qq.js"))))
+       (qq/set-path! (str (str (fs/parent *file*)) "/.qq"))))
 
 (install!)
 
-;; optional:
-(qq/ask! [{:type :confirm :name :question :message "Do you see a prompt?"}])
+;; optionally:
+(when (:question (qq/ask! {:type :confirm
+                           :name :question
+                           :message (str "Hi! Want to see the tutorial? "
+                                         "It guides you through building up some prompts, and then lets you answer them.")}))
+  (qq/tutorial))
 
 ```
 
 Run it with `bb install.clj`
 
+Or, if you are on a mac, copy the file contents above, and run `pbpaste > install.clj && bb install.clj`
+
 ## Usage
 
-The main function to use thing, is [qq/ask!](https://github.com/escherize/quick-question/blob/master/qq.clj#L19). You can pass it 1 single map, or a collection of maps. These maps describe questions that enquirer.js will quickly ask you.
+The main function to use thing, is [qq/ask!](https://github.com/escherize/quick-question/blob/master/qq.clj#L19). You can pass it 1 single map, or a collection of maps. These maps describe questions that enquirer.js will quickly ask you. Every question has a name, and that name will become a key in a map returned by `ask!`.
 
 ## Self Documentation
 
