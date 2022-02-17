@@ -42,6 +42,9 @@ Run it with `bb install.clj`
 
 Or, if you are on a mac, copy the file contents above, and run `pbpaste > install.clj && bb install.clj`
 
+### Installation Demo:
+[![asciicast](https://asciinema.org/a/w0qaYpsSofJa2FQp21FlgYith.png)](https://asciinema.org/a/w0qaYpsSofJa2FQp21FlgYith)
+
 ## Usage
 
 The main function to use thing, is [qq/ask!](https://github.com/escherize/quick-question/blob/master/qq.clj#L19). You can pass it 1 single map, or a collection of maps. These maps describe questions that enquirer.js will quickly ask you. Every question has a name, and that name will become a key in a map returned by `ask!`.
