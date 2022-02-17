@@ -132,8 +132,6 @@
     (println "- docs for the enquire.js prompt types: https://github.com/enquirer/enquirer#-built-in-prompts")
     (println "- docs the names of types: https://github.com/enquirer/enquirer/blob/8d626c206733420637660ac7c2098d7de45e8590/lib/prompts/index.js")
     (newline)
-    (println "Let's begin.")
-    (newline)
     (newline)
     (flush)
     (let [questions (create-questions)]
