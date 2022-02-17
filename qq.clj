@@ -12,7 +12,7 @@
 (def env (into {} (System/getenv)))
 (when (get env "DEBUG") (println "loading"))
 
-(defn qq!
+(defn ask!
   "Takes in questions which is a single or a collection of maps which get
   processed by enquire.js as prompts.
 
@@ -48,7 +48,7 @@
 (defn fill-map [m]
   (into {}
         (for [[kkey field] m]
-          (qq! {:type field
+          (ask! {:type field
                 :name (name kkey)
                 :message (str "set the " field " value for " kkey
                               (when-let [doc (fill-map-docs [field kkey])]
@@ -90,7 +90,7 @@
         *done? (atom false)]
     (while (not @*done?)
       (let [{:keys [type name msg]
-             :as question-data} (qq! [{:type "autocomplete"
+             :as question-data} (ask! [{:type "autocomplete"
                                        :name :type
                                        :message "What question type do you want to add?"
                                        :choices question-types}
@@ -106,7 +106,7 @@
                  :type type
                  :message msg})]
         (swap! *questions conj q)
-        (reset! *done? (:done (qq! {:type "toggle"
+        (reset! *done? (:done (ask! {:type "toggle"
                                     :message "Done?"
                                     :enabled "Yes I'm done."
                                     :disabled "No, let me add more."
@@ -140,7 +140,7 @@
       (newline)
       (newline)
       (flush)
-      (qq! questions)))
+      (ask! questions)))
 
 (when (= *file* (System/getProperty "babashka.file"))
   (if (seq (set/intersection #{"-h" "--help"} (set *command-line-args*)))
