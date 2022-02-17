@@ -36,8 +36,8 @@
                (apply str (repeatedly 10 #(rand-nth "qwertyuioplkjhgfdsazxcvbnmPOIUYTREWQASDFGHJKLMNBVCXZ")))
                "_")
         path @*path
-        in-file  (<< "{{path}}/{{seed}} in.json")
-        out-file (<< "{{path}}/{{seed}} out.json")
+        in-file  (<< "{{path}}/{{seed}}in.json")
+        out-file (<< "{{path}}/{{seed}}out.json")
         json-questions (json/encode questions)]
     (try (let [_ (spit in-file json-questions)
                _ (shell (<< "node {{path}}/qq.js {{in-file}} {{out-file}}"))
