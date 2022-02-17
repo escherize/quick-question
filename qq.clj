@@ -10,7 +10,8 @@
             [clojure.string :as str]))
 
 (def env (into {} (System/getenv)))
-(when (get env "DEBUG") (println "loading"))
+(when (get env "DEBUG")
+  (println (pr-str @(shell {:out :string} "pwd"))))
 
 (defn ask!
   "Takes in questions which is a single or a collection of maps which get
