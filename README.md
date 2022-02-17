@@ -2,7 +2,7 @@
 
 > A babashka script (and installer) that lets you use the beautiful [enquirer.js](https://github.com/enquirer) but with our superior edn data.
 
-## installation
+## Installation
 
 I would copy this into some init script, maybe into your babashka preambles?
 
@@ -18,7 +18,7 @@ I would copy this into some init script, maybe into your babashka preambles?
 (defmacro install!
   "This is only a macro because qq/set-path! wasn't being found."
   []
- `(do (when-not (fs/exists? "quick-question")
+ `(do (when-not (fs/exists? ".qq")
          (println "Need to do some first time setup, please be patient...")
          (shell "git clone https://github.com/escherize/quick-question.git .qq")
          (shell {:dir "./.qq"} "npm install enquirer")
