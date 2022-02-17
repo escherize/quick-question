@@ -14,7 +14,7 @@
 (when (get env "DEBUG")
   (println (pr-str @(shell {:out :string} "pwd"))))
 
-(defonce *path (atom "./quick-question/qq.js"))
+(defonce *path (atom "PLEASE_CALL_qq/set-path!_TO_INIT"))
 
 (defn ask!
   "Takes in questions which is a single or a collection of maps which get
@@ -52,22 +52,10 @@
 (defn set-path! [file-location]
   (reset! *path file-location))
 
-#_(prn (qq! [{:type :input :name :name :message "What is your name"}
-             {:type :numeral :name :age :message "What is your age?"}]))
-
 (def ^:private fill-map-docs
-  {["input" :initial] "This is also the default value."})
+  {["input" :initial] "default value"})
 
-(defn fill-map [m]
-  (into {}
-        (for [[kkey field] m]
-          (ask! {:type field
-                :name (name kkey)
-                :message (str "set the " field " value for " kkey
-                              (when-let [doc (fill-map-docs [field kkey])]
-                                (str " (" doc " )")))}))))
-
-(def type->fields
+(def ^:private type->fields
   {"autocomplete" {:limit "numeral"
                    :initial "numeral"
                    :choices "list"}
@@ -96,9 +84,17 @@
 
    })
 
-(def question-types (sort (keys type->fields)))
+(defn fill-map! [m]
+  (->> (for [[kkey field] m]
+         (ask! {:type field
+                :name (name kkey)
+                :message (str "set the "
+                              (if-let [doc (fill-map-docs [field kkey])]
+                                (str " (" doc " )")
+                                (str  field "' value for '" kkey "'")))}))
+       (into {})))
 
-(defn create-questions []
+(defn- create-questions []
   (let [*questions (atom [])
         *done? (atom false)]
     (while (not @*done?)
@@ -106,7 +102,7 @@
              :as question-data} (ask! [{:type "autocomplete"
                                        :name :type
                                        :message "What question type do you want to add?"
-                                       :choices question-types}
+                                       :choices (sort (keys type->fields))}
                                       {:type "input"
                                        :name :name
                                        :message "What name do you want to use? (this will be the key as well)."}
@@ -114,7 +110,7 @@
                                        :name :msg
                                        :message "And the message?"}])
             q (merge
-                (fill-map (get type->fields type))
+                (fill-map! (get type->fields type))
                 {:name name
                  :type type
                  :message msg})]
@@ -125,7 +121,6 @@
                                     :disabled "No, let me add more."
                                     :name :done})))))
     @*questions))
-
 
 (defn tutorial []
     (println "Quick Question -- qq!")
