@@ -123,7 +123,8 @@
     @*questions))
 
 (defn tutorial []
-    (println "Quick Question -- qq!")
+    (newline)
+    (println "Quick Question Tutorial")
     (newline)
     (println "Follow along with the prompts, to create, and then fill out your own prompt.")
     (println "Yes this is a prompt that generates a prompt. It's self-documenting.")
